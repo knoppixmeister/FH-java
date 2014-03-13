@@ -60,19 +60,22 @@ public class FH {
 
 			HtmlPage resPage = submit.click();
 
-			System.out.println(resPage.asText().indexOf("noppixmeister"));
+			if(resPage.asText().indexOf("noppixmeister") != -1) {
+				Page att = wc.getPage("http://www.forumhouse.ru/attachments/1530190/");
 
-			Page att = wc.getPage("http://www.forumhouse.ru/attachments/1530190/");
+				if(!att.getWebResponse().getContentType().toLowerCase().equals("text/html")) {
+					InputStream inputStream = att.getWebResponse().getContentAsStream();
+					OutputStream outputStream = new FileOutputStream(new File("img.jpg"));
+					int read = 0;
+					byte[] bytes = new byte[1024];
+					while((read = inputStream.read(bytes)) != -1) {
+						outputStream.write(bytes, 0, read);
+					}
 
-			InputStream inputStream = att.getWebResponse().getContentAsStream();
-			OutputStream outputStream = new FileOutputStream(new File("img.jpg"));
-			int read = 0;
-			byte[] bytes = new byte[1024];
-			while((read = inputStream.read(bytes)) != -1) {
-				outputStream.write(bytes, 0, read);
+					outputStream.flush();
+					outputStream.close();
+				}
 			}
-			outputStream.flush();
-			outputStream.close();
 
 			System.out.println("END");
 		}
